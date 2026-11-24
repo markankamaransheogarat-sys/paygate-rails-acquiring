@@ -1,0 +1,65 @@
+<div style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; max-width: 1120px; margin: 24px auto; padding: 0 16px; color: #e2e8f0; background: #0f172a;">
+  <h1 style="margin-bottom: 4px; color: #38bdf8;">PayGate Acquiring Core — Admin Telemetry</h1>
+  <p style="color: #94a3b8; margin-top: 0;">Ruby on Rails 7 + Grape API + Dry-rb + PostgreSQL Raw SQL</p>
+
+  <h2 style="margin-top: 28px;">PSP Cascade Providers (CIS &amp; Asia)</h2>
+  <table style="width: 100%; border-collapse: collapse; background: #1e293b;">
+    <thead>
+      <tr style="text-align: left; border-bottom: 1px solid #334155;">
+        <th style="padding: 8px;">Code</th>
+        <th style="padding: 8px;">Region</th>
+        <th style="padding: 8px;">Currencies</th>
+        <th style="padding: 8px;">Priority</th>
+        <th style="padding: 8px;">Cost (bps)</th>
+        <th style="padding: 8px;">Health</th>
+        <th style="padding: 8px;">Active</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @psps.each do |psp| %>
+        <tr style="border-bottom: 1px solid #334155;">
+          <td style="padding: 8px;"><%= psp.code %></td>
+          <td style="padding: 8px;"><%= psp.region %></td>
+          <td style="padding: 8px;"><%= psp.supported_currencies.join(", ") %></td>
+          <td style="padding: 8px;"><%= psp.priority %></td>
+          <td style="padding: 8px;"><%= psp.cost_bps %></td>
+          <td style="padding: 8px;"><%= psp.health_score %>%</td>
+          <td style="padding: 8px;"><%= psp.active? ? "ON" : "OFF" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top: 28px;">30d SQL Turnover Breakdown</h2>
+  <table style="width: 100%; border-collapse: collapse; background: #1e293b;">
+    <thead>
+      <tr style="text-align: left; border-bottom: 1px solid #334155;">
+        <th style="padding: 8px;">Region</th>
+        <th style="padding: 8px;">Currency</th>
+        <th style="padding: 8px;">PSP</th>
+        <th style="padding: 8px;">Success / Total</th>
+        <th style="padding: 8px;">Conv %</th>
+        <th style="padding: 8px;">Cascade Recovered</th>
+        <th style="padding: 8px;">Captured (minor)</th>
+        <th style="padding: 8px;">P95 Ticket</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @turnover.each do |row| %>
+        <tr style="border-bottom: 1px solid #334155;">
+          <td style="padding: 8px;"><%= row["region"] %></td>
+          <td style="padding: 8px;"><%= row["currency"] %></td>
+          <td style="padding: 8px;"><%= row["psp_code"] %></td>
+          <td style="padding: 8px;"><%= row["success_count"] %> / <%= row["total_count"] %></td>
+          <td style="padding: 8px;"><%= row["conversion_pct"] %>%</td>
+          <td style="padding: 8px;"><%= row["cascade_recovered_count"] %></td>
+          <td style="padding: 8px;"><%= row["gross_captured_minor"] %></td>
+          <td style="padding: 8px;"><%= row["p95_ticket_minor"] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top: 28px;">Outbox Webhook Queue</h2>
+  <p><%= @outbox_stats.inspect %></p>
+</div>
